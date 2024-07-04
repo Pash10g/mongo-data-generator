@@ -66,7 +66,7 @@ def ai_chat(prompt, messages):
 
 
     st.session_state.messages.append({"role": "assistant", "content": resp_messages.data[0].content[0].text.value})
-
+    st.rerun()
 
 if not st.session_state.authenticated:
     auth_form()
@@ -88,7 +88,9 @@ else:
     st.markdown("This assistant can generate meaningful data for MongoDB applications. Ask me !")
     if st.button("New Chat"):
             st.session_state.messages=[]
+            
             st.session_state.thread = client.beta.threads.create()
+            st.rerun()
     messages = st.container(height=500)
 
  
@@ -107,14 +109,18 @@ else:
                 
 
     # Accept user input
-   
-    generated_message = st.session_state.messages[-1]
-    if st.button("Generate Data from last message"):
-        if generated_message:
-            generated_data = json.loads(generated_message["content"])
-            for entity in generated_data['data']:
-            
-                st.sidebar.expander(entity['entity']).code(f"""db.{entity['entity']}.insertMany({entity['documents']});""")
+    
+    if len(st.session_state.messages) > 0:
+
+        generated_message = st.session_state.messages[-1]
+        if st.button("Generate Data from last message") and 'data' in generated_message["content"]:
+            if generated_message is not None:
+                generated_data = json.loads(generated_message["content"])
+                for entity in generated_data['data']:
+                
+                    st.sidebar.expander(entity['entity']).code(f"""db.{entity['entity']}.insertMany({entity['documents']});""")
+            else:
+                st.warning("No data to generate. Please ask for data.")
             ## disable generate button    
     if prompt := st.chat_input("Be creative, lets design great MongoDB applications together..."):
         # Add user message to chat history
