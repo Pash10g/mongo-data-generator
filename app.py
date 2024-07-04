@@ -6,7 +6,7 @@ from openai.types.beta.threads.text_delta_block import TextDeltaBlock
 import os
 import streamlit as st
 import json
-assistant_id =  os.environ.get("ASSISTANT_ID") #'asst_P9vLhthqpg7vEdbatQw2l4u6'
+assistant_id =  os.environ.get("ASSISTANT_ID") 
 
 client = MongoClient(os.environ.get("MONGODB_ATLAS_URI"))
 db = client['schema_design_db']
